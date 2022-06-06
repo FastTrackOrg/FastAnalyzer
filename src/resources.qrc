@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>main.ui</file>
+    <file>plot.ui</file>
+    <file>plot_settings.ui</file>
+    <file>../assets/RobotoCondensed-Regular.ttf</file>
+    <file>../assets/Roboto-Regular.ttf</file>
+</qresource>
+</RCC>

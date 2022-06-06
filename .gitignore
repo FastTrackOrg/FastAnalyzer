@@ -1,0 +1,7 @@
+*ui_*
+*rc_*
+dist/
+build/
+venv/
+*pycache*
+*.spec
