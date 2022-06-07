@@ -84,7 +84,7 @@ class FastAnalyzer(QMainWindow):
 
     def addPlot(self):
         subWindow = QMdiSubWindow(self)
-        subWindow.setWidget(Plot(self))
+        subWindow.setWidget(Plot(self.data, self))
         subWindow.setAttribute(Qt.WA_DeleteOnClose)
         subWindow.setWindowTitle("Plot {}".format(self.plotNumber))
         self.ui.mdiArea.addSubWindow(subWindow)
@@ -127,6 +127,7 @@ class FastAnalyzer(QMainWindow):
         subWindow.setWindowTitle("Data Table")
         self.ui.mdiArea.addSubWindow(subWindow)
         subWindow.show()
+        subWindow.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint) # Need to be set after show()
 
 
 
