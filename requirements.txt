@@ -1,9 +1,13 @@
+altgraph==0.17.2
 autopep8==1.6.0
 cycler==0.11.0
+et-xmlfile==1.1.0
+fastanalysis==0.0.2
 fonttools==4.33.3
 kiwisolver==1.4.2
 matplotlib==3.5.2
 numpy==1.22.4
+openpyxl==3.0.10
 packaging==21.3
 pandas==1.4.2
 Pillow==9.1.1
@@ -17,3 +21,4 @@ seaborn==0.11.2
 shiboken2==5.15.2.1
 six==1.16.0
 toml==0.10.2
+xlrd==2.0.1
