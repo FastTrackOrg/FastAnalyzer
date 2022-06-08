@@ -26,10 +26,25 @@ class PlotSettings(QWidget):
 
         self.ui.plotType.currentIndexChanged.connect(self.plotChanged)
         self.ui.plotType.currentTextChanged.connect(self.autoLabel)
+        self.ui.plotType.currentTextChanged.connect(self.setPlotType)
+
         self.ui.plotKey.currentIndexChanged.connect(self.plotChanged)
+
         self.ui.plotId.currentIndexChanged.connect(self.plotChanged)
         self.ui.plotId.currentTextChanged.connect(self.customId)
+
         self.ui.customId.editingFinished.connect(self.plotChanged)
+
+        self.univariateDistPlot = ["histplot", "kdeplot", "ecdfplot"]
+        self.statPlot = ["boxplot", "violinplot", "swarmplot", "boxenplot"]
+
+        # Workaround to force redraw to setup automatically all the labels
+        originalIndex = self.ui.plotType.currentIndex()
+        self.ui.plotType.setCurrentIndex(0)
+        self.ui.plotType.setCurrentIndex(originalIndex)
+        originalIndex = self.ui.plotId.currentIndex()
+        self.ui.plotId.setCurrentIndex(0)
+        self.ui.plotId.setCurrentIndex(originalIndex)
 
     def setValues(self, params):
         self.ui.xLabel.setText(params["xLabel"])
@@ -62,10 +77,28 @@ class PlotSettings(QWidget):
         else:
             self.ui.customId.setEnabled(False)
 
+    def setPlotType(self, plotType):
+        if plotType in self.univariateDistPlot:
+            self.ui.x.setText("X")
+            self.ui.y.setText("Cat")
+        elif plotType in self.statPlot:
+            self.ui.x.setText("Y")
+            self.ui.y.setText("X")
+
     def autoLabel(self, text):
         if text == "histplot":
+            xLabel = self.ui.plotKey.currentText()
             yLabel = "Count"
         elif text == "kdeplot":
+            xLabel = self.ui.plotKey.currentText()
             yLabel = "Density"
+        elif text == "ecdfplot":
+            xLabel = self.ui.plotKey.currentText()
+            yLabel = "Proportion"
+        elif text in self.statPlot:
+            xLabel = "Id"
+            yLabel = self.ui.plotKey.currentText()
+        else:
+            yLabel = str()
         self.ui.yLabel.setText(yLabel)
-        self.ui.xLabel.setText("px")
+        self.ui.xLabel.setText(xLabel)

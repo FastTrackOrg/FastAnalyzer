@@ -47,7 +47,11 @@ class Plot(QMainWindow):
             mode = "\"id\""
             data = self.data.getObjects(eval("[{}]".format(customId)))
 
-        eval("sns.{}(data=data.reset_index(drop=True), x=\"{}\", hue={}, ax=self.ax)".format(plotType, plotKey, mode))
+        if plotType in self.settingsWindow.univariateDistPlot: # Univariate
+            eval("sns.{}(data=data.reset_index(drop=True), x=\"{}\", hue={}, ax=self.ax)".format(plotType, plotKey, mode))
+        elif plotType in self.settingsWindow.statPlot:
+            eval("sns.{}(data=data.reset_index(drop=True), y=\"{}\", x={}, ax=self.ax)".format(plotType, plotKey, mode))
+
 
     def setLabel(self, xLabel, yLabel, labelSize, **kwargs):
         self.ax.set_xlabel(xLabel, fontsize=labelSize)

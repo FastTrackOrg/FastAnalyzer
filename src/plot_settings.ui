@@ -54,6 +54,31 @@
          <string>kdeplot</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>ecdfplot</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>boxplot</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>violinplot</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>boxenplot</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>swarmplot</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="1" column="1">
@@ -91,14 +116,14 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="x">
        <property name="text">
         <string>Key</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_8">
+      <widget class="QLabel" name="y">
        <property name="text">
         <string>Id</string>
        </property>
