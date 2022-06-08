@@ -7,7 +7,7 @@ from plot import Plot
 import fastanalysis as fa
 
 from PySide2.QtWidgets import QApplication, QMainWindow, QAction, QActionGroup, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem
-from PySide2.QtCore import Signal, Slot, QFile, QStandardPaths, Qt, QTimer, QCoreApplication
+from PySide2.QtCore import Signal, Slot, QFile, QStandardPaths, Qt, QTimer, QCoreApplication, QSettings
 from PySide2.QtGui import QColor, QIcon, QPen, QPainter, QPalette, QPixmap, QFont, QFontDatabase
 import PySide2.QtXml
 from ui_fastanalyzer import Ui_FastAnalyzer
@@ -25,6 +25,10 @@ class FastAnalyzer(QMainWindow):
         self.ui = Ui_FastAnalyzer()
         self.ui.setupUi(self)
 
+        self.settings = QSettings()
+        self.restoreGeometry(self.settings.value("main/geometry"))
+        self.restoreState(self.settings.value("main/windowState"))
+
         # View menu
         self.ui.menuView.addSection(
     QCoreApplication.translate(
@@ -32,37 +36,39 @@ class FastAnalyzer(QMainWindow):
         viewMode = QActionGroup(self)
         stackView = QAction(QCoreApplication.translate("main", "Tabbed"), self)
         stackView.setCheckable(True)
-        stackView.triggered.connect(
+        stackView.toggled.connect(
     lambda: self.ui.mdiArea.setViewMode(
         QMdiArea.TabbedView))
         viewMode.addAction(stackView)
         self.ui.menuView.addAction(stackView)
         winView = QAction(QCoreApplication.translate("main", "Windowed"), self)
         winView.setCheckable(True)
-        winView.triggered.connect(
+        winView.toggled.connect(
     lambda: self.ui.mdiArea.setViewMode(
         QMdiArea.SubWindowView))
         viewMode.addAction(winView)
         self.ui.menuView.addAction(winView)
-        winView.setChecked(True)
 
         self.ui.menuView.addSection(
     QCoreApplication.translate(
         "main", "Window Mode"))
-        winMode = QActionGroup(self)
         cascadeView = QAction(
     QCoreApplication.translate(
         "main", "Cascaded"), self)
-        cascadeView.setCheckable(True)
         cascadeView.triggered.connect(self.ui.mdiArea.cascadeSubWindows)
-        winMode.addAction(cascadeView)
+        winView.toggled.connect(cascadeView.setEnabled)
         self.ui.menuView.addAction(cascadeView)
         tileView = QAction(QCoreApplication.translate("main", "Tiled"), self)
-        tileView.setCheckable(True)
         tileView.triggered.connect(self.ui.mdiArea.tileSubWindows)
-        winMode.addAction(tileView)
+        winView.toggled.connect(tileView.setEnabled)
         self.ui.menuView.addAction(tileView)
-        tileView.setChecked(True)
+
+        if self.settings.value("main/mode", "0") == "0":
+            winView.setChecked(True)
+        else:
+            tileView.setEnabled(False)
+            cascadeView.setEnabled(False)
+            stackView.setChecked(True)
 
         # File menu
         self.ui.actionOpen.triggered.connect(self.loadFile)
@@ -100,7 +106,8 @@ class FastAnalyzer(QMainWindow):
 
         # Prepare Ui
         self.resetUi()
-        self.unSerializeWorkspace(QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)[0] + "current")
+        self.workspacePath = self.settings.value("main/workspacePath", QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)[0] + "current")
+        self.unSerializeWorkspace(self.workspacePath)
 
 
     def addPlot(self, params=None):
@@ -166,7 +173,8 @@ class FastAnalyzer(QMainWindow):
                 wins.append(var)
 
         with open(path, 'wb') as file:
-            workspace = {"filename": self.fileName, "wins": wins}
+            workspace = {"name": path,"filename": self.fileName, "wins": wins}
+            self.workspacePath = workspace["name"]
             pickle.dump(workspace, file)
 
     def unSerializeWorkspace(self, path):
@@ -176,7 +184,8 @@ class FastAnalyzer(QMainWindow):
                     workspace = pickle.load(file)
                     self.fileName = workspace["filename"]
                     self.data = fa.Load(self.fileName)
-                    self.ui.statusbar.showMessage(QCoreApplication.translate("main", "{} loaded with success".format(self.fileName)))
+                    self.workspacePath = workspace["name"]
+                    self.ui.statusbar.showMessage(QCoreApplication.translate("main", "{} loaded with success".format(self.workspacePath)))
                     self.ui.toolBar.setEnabled(True)
                     self.loadDatainTableWin()
                     for i in workspace["wins"]:
@@ -221,8 +230,15 @@ class FastAnalyzer(QMainWindow):
             ...
 
     def closeEvent(self, event):
-        self.serializeWorkspace(QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)[0] + "current")
+        self.serializeWorkspace(self.workspacePath)
+        self.saveSettings()
         event.accept()
+
+    def saveSettings(self):
+        self.settings.setValue("main/geometry", self.saveGeometry());
+        self.settings.setValue("main/windowState", self.saveState());
+        self.settings.setValue("main/mode", self.ui.mdiArea.viewMode());
+        self.settings.setValue("main/workspacePath", self.workspacePath);
 
 
 if __name__ == "__main__":
@@ -230,6 +246,10 @@ if __name__ == "__main__":
     QFontDatabase.addApplicationFont(":/assets/RobotoCondensed-Regular.ttf")
     QFontDatabase.addApplicationFont(":/assets/Roboto-Regular.ttf")
     app.setFont(QFont("Roboto"))
+    app.setApplicationName("FastAnalyzer")
+    app.setApplicationVersion("0.0.0")
+    app.setOrganizationName("FastTrackOrg")
+    app.setOrganizationDomain("fasttrack.sh")
     widget=FastAnalyzer()
     widget.show()
     sys.exit(app.exec_())
