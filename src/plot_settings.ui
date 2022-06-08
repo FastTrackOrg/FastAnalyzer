@@ -43,7 +43,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QComboBox" name="plotComboBox">
+      <widget class="QComboBox" name="plotType">
        <item>
         <property name="text">
          <string>histplot</string>
@@ -57,7 +57,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="keyComboBox">
+      <widget class="QComboBox" name="plotKey">
        <item>
         <property name="text">
          <string>xBody</string>
@@ -105,7 +105,7 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QComboBox" name="idComboBox">
+      <widget class="QComboBox" name="plotId">
        <item>
         <property name="text">
          <string>All</string>
@@ -131,7 +131,7 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="idCustom">
+      <widget class="QLineEdit" name="customId">
        <property name="enabled">
         <bool>false</bool>
        </property>

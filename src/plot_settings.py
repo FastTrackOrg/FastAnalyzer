@@ -9,10 +9,13 @@ class PlotSettings(QWidget):
 
     redraw = Signal(dict)
 
-    def __init__(self, parent):
+    def __init__(self, parent=None, params=None):
         super().__init__(parent)
         self.ui = Ui_PlotSettings()
         self.ui.setupUi(self)
+
+        if params:
+            self.setValues(params)
 
         self.ui.xLabel.editingFinished.connect(self.plotChanged)
         self.ui.yLabel.editingFinished.connect(self.plotChanged)
@@ -21,12 +24,23 @@ class PlotSettings(QWidget):
         self.ui.title.editingFinished.connect(self.plotChanged)
         self.ui.titleSize.valueChanged.connect(self.plotChanged)
 
-        self.ui.plotComboBox.currentIndexChanged.connect(self.plotChanged)
-        self.ui.plotComboBox.currentTextChanged.connect(self.autoLabel)
-        self.ui.keyComboBox.currentIndexChanged.connect(self.plotChanged)
-        self.ui.idComboBox.currentIndexChanged.connect(self.plotChanged)
-        self.ui.idComboBox.currentTextChanged.connect(self.customId)
-        self.ui.idCustom.editingFinished.connect(self.plotChanged)
+        self.ui.plotType.currentIndexChanged.connect(self.plotChanged)
+        self.ui.plotType.currentTextChanged.connect(self.autoLabel)
+        self.ui.plotKey.currentIndexChanged.connect(self.plotChanged)
+        self.ui.plotId.currentIndexChanged.connect(self.plotChanged)
+        self.ui.plotId.currentTextChanged.connect(self.customId)
+        self.ui.customId.editingFinished.connect(self.plotChanged)
+
+    def setValues(self, params):
+        self.ui.xLabel.setText(params["xLabel"])
+        self.ui.yLabel.setText(params["yLabel"])
+        self.ui.labelSize.setValue(params["labelSize"])
+        self.ui.title.setText(params["title"])
+        self.ui.titleSize.setValue(params["titleSize"])
+        self.ui.plotType.setCurrentText(params["plotType"])
+        self.ui.plotKey.setCurrentText(params["plotKey"])
+        self.ui.plotId.setCurrentText(params["plotId"])
+        self.ui.customId.setText(params["customId"])
 
     def plotChanged(self):
         params = dict()
@@ -35,17 +49,18 @@ class PlotSettings(QWidget):
         params["labelSize"] = self.ui.labelSize.value()
         params["title"] = self.ui.title.text()
         params["titleSize"] = self.ui.titleSize.value()
-        params["plotType"] = self.ui.plotComboBox.currentText()
-        params["plotKey"] = self.ui.keyComboBox.currentText()
-        params["idPlot"] = self.ui.idComboBox.currentText()
-        params["idCustom"] = self.ui.idCustom.text()
+        params["plotType"] = self.ui.plotType.currentText()
+        params["plotKey"] = self.ui.plotKey.currentText()
+        params["plotId"] = self.ui.plotId.currentText()
+        params["customId"] = self.ui.customId.text()
         self.redraw.emit(params)
+        return params
 
     def customId(self, text):
         if text == "Custom List":
-            self.ui.idCustom.setEnabled(True)
+            self.ui.customId.setEnabled(True)
         else:
-            self.ui.idCustom.setEnabled(False)
+            self.ui.customId.setEnabled(False)
 
     def autoLabel(self, text):
         if text == "histplot":

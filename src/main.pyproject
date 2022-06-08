@@ -1,3 +1,3 @@
 {
-    "files": ["main.py", "main.ui", "plot.py", "plot.ui", "plot_settings.py", "plot_settings.ui"]
+    "files": ["fastanalyzer.py", "fastanalyzer.ui", "plot.py", "plot.ui", "plot_settings.py", "plot_settings.ui"]
 }

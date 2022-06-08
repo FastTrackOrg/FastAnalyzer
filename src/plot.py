@@ -11,18 +11,20 @@ import seaborn as sns
 
 
 class Plot(QMainWindow):
-    def __init__(self, data, parent=None):
+    def __init__(self, data, parent=None, params=None):
         super().__init__(parent)
         self.data = data
         self.ui = Ui_Plot()
         self.ui.setupUi(self)
-        self.settingsWindow = PlotSettings(self)
+        self.settingsWindow = PlotSettings(self, params)
         self.ui.settingsDock.setWidget(self.settingsWindow)
 
         self.canvas = FigureCanvas(Figure(figsize=(600*1/plt.rcParams['figure.dpi'], 200*1/plt.rcParams['figure.dpi'])))
         self.setCentralWidget(self.canvas)
         self.ax = self.canvas.figure.subplots()
-        self.addToolBar(NavigationToolbar(self.canvas, self))
+        self.mplToolBar = NavigationToolbar(self.canvas, self)
+        self.mplToolBar.setObjectName("Mpl toolbar")
+        self.addToolBar(self.mplToolBar)
 
         self.settingsWindow.redraw.connect(self.update)
         self.settingsWindow.plotChanged()
@@ -34,16 +36,16 @@ class Plot(QMainWindow):
         self.setTitle(**params)
         self.canvas.draw_idle()
 
-    def plot(self, plotType, plotKey, idPlot, idCustom, **kwargs):
-        if idPlot == "Pool":
+    def plot(self, plotType, plotKey, plotId, customId, **kwargs):
+        if plotId == "Pool":
             mode = None
             data = self.data.getDataframe()
-        elif idPlot == "All":
+        elif plotId == "All":
             mode = "\"id\""
             data = self.data.getDataframe()
         else:
             mode = "\"id\""
-            data = self.data.getObjects(eval("[{}]".format(idCustom)))
+            data = self.data.getObjects(eval("[{}]".format(customId)))
 
         eval("sns.{}(data=data.reset_index(drop=True), x=\"{}\", hue={}, ax=self.ax)".format(plotType, plotKey, mode))
 
@@ -53,4 +55,7 @@ class Plot(QMainWindow):
 
     def setTitle(self, title, titleSize,**kwargs):
         self.ax.set_title(title, fontsize=titleSize)
+
+    def savePlotState(self):
+        return self.settingsWindow.plotChanged()
 
