@@ -2,5 +2,7 @@
 <qresource>
     <file>../assets/RobotoCondensed-Regular.ttf</file>
     <file>../assets/Roboto-Regular.ttf</file>
+    <file>../assets/plot.png</file>
+    <file>../assets/table.png</file>
 </qresource>
 </RCC>

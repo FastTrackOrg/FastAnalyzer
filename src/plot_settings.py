@@ -74,7 +74,8 @@ class PlotSettings(QWidget):
         params["plotKeyX"] = self.ui.plotKeyX.currentText()
         params["plotId"] = self.ui.plotId.currentText()
         params["customId"] = self.ui.customId.text()
-        if not self.ui.lowLevelApi.text(): self.ui.lowLevelApi.setText("{}") 
+        if not self.ui.lowLevelApi.text():
+            self.ui.lowLevelApi.setText("{}")
         params["lowLevelApi"] = self.ui.lowLevelApi.text()
         self.redraw.emit(params)
         return params
@@ -100,11 +101,13 @@ class PlotSettings(QWidget):
         if self.ui.plotType.currentText() in self.univariateDistPlot:
             xLabel = self.ui.plotKey.currentText()
             yLabel = self.ui.plotKeyX.currentText()
-            if self.ui.plotKeyX.currentText() == "None" and self.ui.plotType.currentText() == "histplot":
+            if self.ui.plotKeyX.currentText(
+            ) == "None" and self.ui.plotType.currentText() == "histplot":
                 yLabel = "Count"
             elif self.ui.plotKey.currentText() == "None" and self.ui.plotType.currentText() == "histplot":
                 xLabel = "Count"
-            if self.ui.plotKeyX.currentText() == "None" and self.ui.plotType.currentText() == "kdeplot":
+            if self.ui.plotKeyX.currentText(
+            ) == "None" and self.ui.plotType.currentText() == "kdeplot":
                 yLabel = "Density"
             elif self.ui.plotKey.currentText() == "None" and self.ui.plotType.currentText() == "kdeplot":
                 xLabel = "Density"
@@ -112,7 +115,7 @@ class PlotSettings(QWidget):
             xLabel = "Id"
             yLabel = self.ui.plotKey.currentText()
         else:
-            yLabel=str()
+            yLabel = str()
             yLabel = str()
         self.ui.yLabel.setText(yLabel)
         self.ui.xLabel.setText(xLabel)

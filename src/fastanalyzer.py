@@ -31,30 +31,30 @@ class FastAnalyzer(QMainWindow):
 
         # View menu
         self.ui.menuView.addSection(
-    QCoreApplication.translate(
-        "main", "View Mode"))
+            QCoreApplication.translate(
+                "main", "View Mode"))
         viewMode = QActionGroup(self)
         stackView = QAction(QCoreApplication.translate("main", "Tabbed"), self)
         stackView.setCheckable(True)
         stackView.toggled.connect(
-    lambda: self.ui.mdiArea.setViewMode(
-        QMdiArea.TabbedView))
+            lambda: self.ui.mdiArea.setViewMode(
+                QMdiArea.TabbedView))
         viewMode.addAction(stackView)
         self.ui.menuView.addAction(stackView)
         winView = QAction(QCoreApplication.translate("main", "Windowed"), self)
         winView.setCheckable(True)
         winView.toggled.connect(
-    lambda: self.ui.mdiArea.setViewMode(
-        QMdiArea.SubWindowView))
+            lambda: self.ui.mdiArea.setViewMode(
+                QMdiArea.SubWindowView))
         viewMode.addAction(winView)
         self.ui.menuView.addAction(winView)
 
         self.ui.menuView.addSection(
-    QCoreApplication.translate(
-        "main", "Window Mode"))
+            QCoreApplication.translate(
+                "main", "Window Mode"))
         cascadeView = QAction(
-    QCoreApplication.translate(
-        "main", "Cascaded"), self)
+            QCoreApplication.translate(
+                "main", "Cascaded"), self)
         cascadeView.triggered.connect(self.ui.mdiArea.cascadeSubWindows)
         winView.toggled.connect(cascadeView.setEnabled)
         self.ui.menuView.addAction(cascadeView)
@@ -81,34 +81,36 @@ class FastAnalyzer(QMainWindow):
 
         # Help menu
         self.ui.actionAboutQt.triggered.connect(qApp.aboutQt)
-        self.ui.actionLicense.triggered.connect(lambda: QMessageBox.about(self, "License", "MIT  " \
-                "License\nCopyright (c) 2022 FastTrackOrg\nPermission is hereby granted, free of  " \
-                "charge, to any person obtaining a copy\nof this software and associated  " \
-                "documentation files (the 'Software'), to deal\nin the Software without restriction, " \
-                "including without limitation the rights\nto use, copy, modify, merge, publish, " \
-                "distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons  " \
-                "to whom the Software is\nfurnished to do so, subject to the following conditions: " \
-                "\n\nThe above copyright notice and this permission notice shall be included in  " \
-                "all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED " \
-                "'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT " \
-                "LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND " \
-                "NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR " \
-                "ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR " \
-                "OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR " \
-                "OTHER DEALINGS IN THE\nSOFTWARE."))
+        self.ui.actionLicense.triggered.connect(lambda: QMessageBox.about(self, "License", "MIT  "
+                                                                          "License\nCopyright (c) 2022 FastTrackOrg\nPermission is hereby granted, free of  "
+                                                                          "charge, to any person obtaining a copy\nof this software and associated  "
+                                                                          "documentation files (the 'Software'), to deal\nin the Software without restriction, "
+                                                                          "including without limitation the rights\nto use, copy, modify, merge, publish, "
+                                                                          "distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons  "
+                                                                          "to whom the Software is\nfurnished to do so, subject to the following conditions: "
+                                                                          "\n\nThe above copyright notice and this permission notice shall be included in  "
+                                                                          "all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "
+                                                                          "'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT "
+                                                                          "LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND "
+                                                                          "NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR "
+                                                                          "ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR "
+                                                                          "OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR "
+                                                                          "OTHER DEALINGS IN THE\nSOFTWARE."))
 
         # ToolBar
-        self.addPlotAction = QAction(
-            QCoreApplication.translate(
-                "main", "Add Plot"), self)
+        self.addPlotAction = QAction(QIcon(":/assets/plot.png"),
+                                     QCoreApplication.translate(
+            "main", "Add Plot"), self)
         self.addPlotAction.triggered.connect(self.addPlot)
         self.ui.toolBar.addAction(self.addPlotAction)
 
         # Prepare Ui
         self.resetUi()
-        self.workspacePath = self.settings.value("main/workspacePath", QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)[0] + "current")
+        self.workspacePath = self.settings.value(
+            "main/workspacePath",
+            QStandardPaths.standardLocations(
+                QStandardPaths.AppDataLocation)[0] + "current")
         self.unSerializeWorkspace(self.workspacePath)
-
 
     def addPlot(self, params=None):
         subWindow = QMdiSubWindow(self)
@@ -120,6 +122,7 @@ class FastAnalyzer(QMainWindow):
         if params:
             subWindow.restoreGeometry(params["geometry"])
             subWindow.widget().restoreState(params["state"])
+        subWindow.setWindowIcon(QIcon(":/assets/plot.png"))
         subWindow.show()
 
     def resetUi(self):
@@ -131,37 +134,50 @@ class FastAnalyzer(QMainWindow):
 
     def loadFile(self):
         fileName, __ = QFileDialog.getOpenFileName(
-                    self, QCoreApplication.translate(
-                        "main", "Open tracking data"), QStandardPaths.standardLocations(
-                        QStandardPaths.HomeLocation)[0], QCoreApplication.translate(
-                        "main", "Tracking Files (*.db *.txt)"))
+            self, QCoreApplication.translate(
+                "main", "Open tracking data"), QStandardPaths.standardLocations(
+                QStandardPaths.HomeLocation)[0], QCoreApplication.translate(
+                "main", "Tracking Files (*.db *.txt)"))
         if fileName:
             try:
                 self.resetUi()
                 self.fileName = fileName
                 self.data = fa.Load(self.fileName)
-                self.ui.statusbar.showMessage(QCoreApplication.translate("main", "{} loaded with success".format(self.fileName)))
+                self.ui.statusbar.showMessage(
+                    QCoreApplication.translate(
+                        "main", "{} loaded with success".format(
+                            self.fileName)))
                 self.ui.toolBar.setEnabled(True)
                 self.loadDatainTableWin()
+                self.addPlot()
             except Exception as e:
-                self.ui.statusbar.showMessage(QCoreApplication.translate("main", "{} can't be parsed {}".format(self.fileName, e)))
+                self.ui.statusbar.showMessage(
+                    QCoreApplication.translate(
+                        "main", "{} can't be parsed {}".format(
+                            self.fileName, e)))
                 self.resetUi()
 
     def loadDatainTableWin(self):
-        table = QTableWidget(len(self.data.getDataframe()), len(self.data.getDataframe().columns), self)
-        for i, j in enumerate(self.data.getDataframe().columns.values.tolist()):
+        table = QTableWidget(len(self.data.getDataframe()), len(
+            self.data.getDataframe().columns), self)
+        for i, j in enumerate(
+                self.data.getDataframe().columns.values.tolist()):
             table.setHorizontalHeaderItem(i, QTableWidgetItem(j))
         for col, __ in enumerate(self.data.getDataframe().columns):
-            for row, val in enumerate(self.data.getDataframe().iloc[:, col].values):
+            for row, val in enumerate(
+                    self.data.getDataframe().iloc[:, col].values):
                 table.setItem(row, col, QTableWidgetItem(str(val)))
 
         subWindow = QMdiSubWindow(self)
         subWindow.setWidget(table)
         subWindow.setAttribute(Qt.WA_DeleteOnClose)
         subWindow.setWindowTitle("Data Table")
+        # Not working without close button...
+        subWindow.setWindowIcon(QIcon(":/assets/table.png"))
         self.ui.mdiArea.addSubWindow(subWindow)
+        subWindow.setWindowFlags(Qt.SubWindow | Qt.WindowTitleHint |
+                                 Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
         subWindow.show()
-        subWindow.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint) # Need to be set after show()
 
     def serializeWorkspace(self, path):
         wins = []
@@ -173,7 +189,7 @@ class FastAnalyzer(QMainWindow):
                 wins.append(var)
 
         with open(path, 'wb') as file:
-            workspace = {"name": path,"filename": self.fileName, "wins": wins}
+            workspace = {"name": path, "filename": self.fileName, "wins": wins}
             self.workspacePath = workspace["name"]
             pickle.dump(workspace, file)
 
@@ -185,31 +201,34 @@ class FastAnalyzer(QMainWindow):
                     self.fileName = workspace["filename"]
                     self.data = fa.Load(self.fileName)
                     self.workspacePath = workspace["name"]
-                    self.ui.statusbar.showMessage(QCoreApplication.translate("main", "{} loaded with success".format(self.workspacePath)))
+                    self.ui.statusbar.showMessage(
+                        QCoreApplication.translate(
+                            "main", "{} loaded with success".format(
+                                self.workspacePath)))
                     self.ui.toolBar.setEnabled(True)
                     self.loadDatainTableWin()
                     for i in workspace["wins"]:
                         self.addPlot(i)
         except Exception as e:
-            self.ui.statusbar.showMessage(QCoreApplication.translate("main", "Last workspace can't be recovered {}".format(e)))
+            self.ui.statusbar.showMessage(QCoreApplication.translate(
+                "main", "Last workspace can't be recovered {}".format(e)))
             self.resetUi()
 
     def saveWorkspace(self):
         fileName, __ = QFileDialog.getSaveFileName(
-                    self, QCoreApplication.translate(
-                        "main", "Save Workspace"), QStandardPaths.standardLocations(
-                        QStandardPaths.HomeLocation)[0] + "/fastanalyzer.workspace", QCoreApplication.translate(
-                        "main", "Workspace (*.workspace)"))
+            self, QCoreApplication.translate(
+                "main", "Save Workspace"), QStandardPaths.standardLocations(
+                QStandardPaths.HomeLocation)[0] + "/fastanalyzer.workspace", QCoreApplication.translate(
+                "main", "Workspace (*.workspace)"))
         if fileName:
             self.serializeWorkspace(fileName)
 
-
     def loadWorkspace(self):
         fileName, __ = QFileDialog.getOpenFileName(
-                    self, QCoreApplication.translate(
-                        "main", "Load Workspace"), QStandardPaths.standardLocations(
-                        QStandardPaths.HomeLocation)[0], QCoreApplication.translate(
-                        "main", "Workspace (*.workspace)"))
+            self, QCoreApplication.translate(
+                "main", "Load Workspace"), QStandardPaths.standardLocations(
+                QStandardPaths.HomeLocation)[0], QCoreApplication.translate(
+                "main", "Workspace (*.workspace)"))
         if fileName:
             self.resetUi()
             self.unSerializeWorkspace(fileName)
@@ -218,7 +237,8 @@ class FastAnalyzer(QMainWindow):
         msgBox = QMessageBox()
         msgBox.setText("The workspace has been modified.")
         msgBox.setInformativeText("Do you want to save your changes?")
-        msgBox.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+        msgBox.setStandardButtons(
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
         msgBox.setDefaultButton(QMessageBox.Save)
         ret = msgBox.exec_()
         if ret == QMessageBox.Save:
@@ -235,14 +255,14 @@ class FastAnalyzer(QMainWindow):
         event.accept()
 
     def saveSettings(self):
-        self.settings.setValue("main/geometry", self.saveGeometry());
-        self.settings.setValue("main/windowState", self.saveState());
-        self.settings.setValue("main/mode", self.ui.mdiArea.viewMode());
-        self.settings.setValue("main/workspacePath", self.workspacePath);
+        self.settings.setValue("main/geometry", self.saveGeometry())
+        self.settings.setValue("main/windowState", self.saveState())
+        self.settings.setValue("main/mode", self.ui.mdiArea.viewMode())
+        self.settings.setValue("main/workspacePath", self.workspacePath)
 
 
 if __name__ == "__main__":
-    app=QApplication([])
+    app = QApplication([])
     QFontDatabase.addApplicationFont(":/assets/RobotoCondensed-Regular.ttf")
     QFontDatabase.addApplicationFont(":/assets/Roboto-Regular.ttf")
     app.setFont(QFont("Roboto"))
@@ -250,6 +270,6 @@ if __name__ == "__main__":
     app.setApplicationVersion("0.0.0")
     app.setOrganizationName("FastTrackOrg")
     app.setOrganizationDomain("fasttrack.sh")
-    widget=FastAnalyzer()
+    widget = FastAnalyzer()
     widget.show()
     sys.exit(app.exec_())
