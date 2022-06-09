@@ -31,26 +31,33 @@ class Plot(QMainWindow):
 
     def update(self, params):
         self.ax.clear()
+        params = {i: ("\"{}\"".format(j) if i in ["plotKey", "plotKeyX"] else j) for i, j in params.items()}
+        params = {i : (None if j == "\"None\"" else j) for i, j in params.items()}
         self.plot(**params)
         self.setLabel(**params)
         self.setTitle(**params)
         self.canvas.draw_idle()
 
-    def plot(self, plotType, plotKey, plotId, customId, **kwargs):
-        if plotId == "Pool":
-            mode = None
-            data = self.data.getDataframe()
-        elif plotId == "All":
-            mode = "\"id\""
-            data = self.data.getDataframe()
-        else:
-            mode = "\"id\""
-            data = self.data.getObjects(eval("[{}]".format(customId)))
+    def plot(self, plotType, plotKey, plotId, customId, plotKeyX, lowLevelApi, **kwargs):
+        try:
+            if plotId == "Pool":
+                mode = None
+                data = self.data.getDataframe()
+            elif plotId == "All":
+                mode = "\"id\""
+                data = self.data.getDataframe()
+            else:
+                mode = "\"id\""
+                data = self.data.getObjects(eval("[{}]".format(customId)))
 
-        if plotType in self.settingsWindow.univariateDistPlot: # Univariate
-            eval("sns.{}(data=data.reset_index(drop=True), x=\"{}\", hue={}, ax=self.ax)".format(plotType, plotKey, mode))
-        elif plotType in self.settingsWindow.statPlot:
-            eval("sns.{}(data=data.reset_index(drop=True), y=\"{}\", x={}, ax=self.ax)".format(plotType, plotKey, mode))
+            if plotType in self.settingsWindow.univariateDistPlot: # Univariate distribution
+                eval("sns.{}(data=data.reset_index(drop=True), x={}, y={}, hue={}, ax=self.ax, fill=True, **{})".format(plotType, plotKey, plotKeyX, mode, lowLevelApi))
+            elif plotType in self.settingsWindow.statPlot: # Descriptive
+                eval("sns.{}(data=data.reset_index(drop=True), y={}, x={}, ax=self.ax, **{})".format(plotType, plotKey, mode, lowLevelApi))
+
+            self.ui.statusbar.showMessage(QCoreApplication.translate("main", "Plotted with success"))
+        except Exception as e:
+            self.ui.statusbar.showMessage(QCoreApplication.translate("plot", "Error while plotting: {}".format(e)))
 
 
     def setLabel(self, xLabel, yLabel, labelSize, **kwargs):

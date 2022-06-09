@@ -25,17 +25,19 @@ class PlotSettings(QWidget):
         self.ui.titleSize.valueChanged.connect(self.plotChanged)
 
         self.ui.plotType.currentIndexChanged.connect(self.plotChanged)
-        self.ui.plotType.currentTextChanged.connect(self.autoLabel)
         self.ui.plotType.currentTextChanged.connect(self.setPlotType)
 
         self.ui.plotKey.currentIndexChanged.connect(self.plotChanged)
+        self.ui.plotKeyX.currentIndexChanged.connect(self.plotChanged)
 
         self.ui.plotId.currentIndexChanged.connect(self.plotChanged)
         self.ui.plotId.currentTextChanged.connect(self.customId)
 
         self.ui.customId.editingFinished.connect(self.plotChanged)
 
-        self.univariateDistPlot = ["histplot", "kdeplot", "ecdfplot"]
+        self.ui.lowLevelApi.editingFinished.connect(self.plotChanged)
+
+        self.univariateDistPlot = ["histplot", "kdeplot"]
         self.statPlot = ["boxplot", "violinplot", "swarmplot", "boxenplot"]
 
         # Workaround to force redraw to setup automatically all the labels
@@ -54,10 +56,13 @@ class PlotSettings(QWidget):
         self.ui.titleSize.setValue(params["titleSize"])
         self.ui.plotType.setCurrentText(params["plotType"])
         self.ui.plotKey.setCurrentText(params["plotKey"])
+        self.ui.plotKeyX.setCurrentText(params["plotKeyX"])
         self.ui.plotId.setCurrentText(params["plotId"])
         self.ui.customId.setText(params["customId"])
+        self.ui.lowLevelApi.setText(params["lowLevelApi"])
 
     def plotChanged(self):
+        self.autoLabel()
         params = dict()
         params["xLabel"] = self.ui.xLabel.text()
         params["yLabel"] = self.ui.yLabel.text()
@@ -66,8 +71,11 @@ class PlotSettings(QWidget):
         params["titleSize"] = self.ui.titleSize.value()
         params["plotType"] = self.ui.plotType.currentText()
         params["plotKey"] = self.ui.plotKey.currentText()
+        params["plotKeyX"] = self.ui.plotKeyX.currentText()
         params["plotId"] = self.ui.plotId.currentText()
         params["customId"] = self.ui.customId.text()
+        if not self.ui.lowLevelApi.text(): self.ui.lowLevelApi.setText("{}") 
+        params["lowLevelApi"] = self.ui.lowLevelApi.text()
         self.redraw.emit(params)
         return params
 
@@ -79,26 +87,32 @@ class PlotSettings(QWidget):
 
     def setPlotType(self, plotType):
         if plotType in self.univariateDistPlot:
+            self.ui.plotKeyX.setEnabled(True)
             self.ui.x.setText("X")
-            self.ui.y.setText("Cat")
+            self.ui.y.setText("Y")
+            self.ui.hue.setText("Cat")
         elif plotType in self.statPlot:
+            self.ui.plotKeyX.setEnabled(False)
             self.ui.x.setText("Y")
-            self.ui.y.setText("X")
+            self.ui.hue.setText("X")
 
-    def autoLabel(self, text):
-        if text == "histplot":
+    def autoLabel(self):
+        if self.ui.plotType.currentText() in self.univariateDistPlot:
             xLabel = self.ui.plotKey.currentText()
-            yLabel = "Count"
-        elif text == "kdeplot":
-            xLabel = self.ui.plotKey.currentText()
-            yLabel = "Density"
-        elif text == "ecdfplot":
-            xLabel = self.ui.plotKey.currentText()
-            yLabel = "Proportion"
-        elif text in self.statPlot:
+            yLabel = self.ui.plotKeyX.currentText()
+            if self.ui.plotKeyX.currentText() == "None" and self.ui.plotType.currentText() == "histplot":
+                yLabel = "Count"
+            elif self.ui.plotKey.currentText() == "None" and self.ui.plotType.currentText() == "histplot":
+                xLabel = "Count"
+            if self.ui.plotKeyX.currentText() == "None" and self.ui.plotType.currentText() == "kdeplot":
+                yLabel = "Density"
+            elif self.ui.plotKey.currentText() == "None" and self.ui.plotType.currentText() == "kdeplot":
+                xLabel = "Density"
+        elif self.ui.plotType.currentText() in self.statPlot:
             xLabel = "Id"
             yLabel = self.ui.plotKey.currentText()
         else:
+            yLabel=str()
             yLabel = str()
         self.ui.yLabel.setText(yLabel)
         self.ui.xLabel.setText(xLabel)
