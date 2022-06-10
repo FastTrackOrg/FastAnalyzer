@@ -2,7 +2,7 @@ altgraph==0.17.2
 autopep8==1.6.0
 cycler==0.11.0
 et-xmlfile==1.1.0
-fastanalysis==0.0.2
+fastanalysis==0.0.3
 fonttools==4.33.3
 kiwisolver==1.4.2
 matplotlib==3.5.2

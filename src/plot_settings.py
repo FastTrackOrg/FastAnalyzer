@@ -119,3 +119,9 @@ class PlotSettings(QWidget):
             yLabel = str()
         self.ui.yLabel.setText(yLabel)
         self.ui.xLabel.setText(xLabel)
+
+    def setKeys(self, keys):
+        self.ui.plotKey.clear()
+        self.ui.plotKey.addItems(keys + ["None"])
+        self.ui.plotKeyX.clear()
+        self.ui.plotKeyX.addItems(["None"] + keys)

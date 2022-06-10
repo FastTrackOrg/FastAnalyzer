@@ -4,6 +4,7 @@ import sys
 import pickle
 
 from plot import Plot
+from data_calc import DataCalc
 import fastanalysis as fa
 
 from PySide2.QtWidgets import QApplication, QMainWindow, QAction, QActionGroup, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem
@@ -19,6 +20,8 @@ os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 
 
 class FastAnalyzer(QMainWindow):
+
+    dataChanged = Signal()
 
     def __init__(self):
         super().__init__()
@@ -103,6 +106,11 @@ class FastAnalyzer(QMainWindow):
             "main", "Add Plot"), self)
         self.addPlotAction.triggered.connect(self.addPlot)
         self.ui.toolBar.addAction(self.addPlotAction)
+        self.addTableAction = QAction(QIcon(":/assets/table.png"),
+                                     QCoreApplication.translate(
+            "main", "Show Table"), self)
+        self.addTableAction.triggered.connect(self.addTable)
+        self.ui.toolBar.addAction(self.addTableAction)
 
         # Prepare Ui
         self.resetUi()
@@ -114,7 +122,9 @@ class FastAnalyzer(QMainWindow):
 
     def addPlot(self, params=None):
         subWindow = QMdiSubWindow(self)
-        subWindow.setWidget(Plot(self.data, parent=self, params=params))
+        plot = Plot(self.data, parent=self, params=params)
+        self.dataChanged.connect(plot.updateData)
+        subWindow.setWidget(plot)
         subWindow.setAttribute(Qt.WA_DeleteOnClose)
         subWindow.setWindowTitle("Plot {}".format(self.plotNumber))
         self.ui.mdiArea.addSubWindow(subWindow)
@@ -148,7 +158,7 @@ class FastAnalyzer(QMainWindow):
                         "main", "{} loaded with success".format(
                             self.fileName)))
                 self.ui.toolBar.setEnabled(True)
-                self.loadDatainTableWin()
+                self.addTable()
                 self.addPlot()
             except Exception as e:
                 self.ui.statusbar.showMessage(
@@ -157,39 +167,17 @@ class FastAnalyzer(QMainWindow):
                             self.fileName, e)))
                 self.resetUi()
 
-    def loadDatainTableWin(self):
-        table = QTableWidget(len(self.data.getDataframe()), len(
-            self.data.getDataframe().columns), self)
-        for i, j in enumerate(
-                self.data.getDataframe().columns.values.tolist()):
-            table.setHorizontalHeaderItem(i, QTableWidgetItem(j))
-        for col, __ in enumerate(self.data.getDataframe().columns):
-            for row, val in enumerate(
-                    self.data.getDataframe().iloc[:, col].values):
-                table.setItem(row, col, QTableWidgetItem(str(val)))
-
-        subWindow = QMdiSubWindow(self)
-        subWindow.setWidget(table)
-        subWindow.setAttribute(Qt.WA_DeleteOnClose)
-        subWindow.setWindowTitle("Data Table")
-        # Not working without close button...
-        subWindow.setWindowIcon(QIcon(":/assets/table.png"))
-        self.ui.mdiArea.addSubWindow(subWindow)
-        subWindow.setWindowFlags(Qt.SubWindow | Qt.WindowTitleHint |
-                                 Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
-        subWindow.show()
-
     def serializeWorkspace(self, path):
         wins = []
         for i in self.ui.mdiArea.subWindowList(QMdiArea.StackingOrder):
-            if i.windowTitle() != "Data Table":
+            if i.windowTitle() != "Calc":
                 var = i.widget().savePlotState()
                 var["geometry"] = i.saveGeometry()
                 var["state"] = i.widget().saveState()
                 wins.append(var)
 
         with open(path, 'wb') as file:
-            workspace = {"name": path, "filename": self.fileName, "wins": wins}
+            workspace = {"name": path, "filename": self.fileName, "wins": wins, "data": self.data}
             self.workspacePath = workspace["name"]
             pickle.dump(workspace, file)
 
@@ -199,14 +187,14 @@ class FastAnalyzer(QMainWindow):
                 with open(path, 'rb') as file:
                     workspace = pickle.load(file)
                     self.fileName = workspace["filename"]
-                    self.data = fa.Load(self.fileName)
+                    self.data = workspace["data"]
                     self.workspacePath = workspace["name"]
                     self.ui.statusbar.showMessage(
                         QCoreApplication.translate(
                             "main", "{} loaded with success".format(
                                 self.workspacePath)))
                     self.ui.toolBar.setEnabled(True)
-                    self.loadDatainTableWin()
+                    self.addTable()
                     for i in workspace["wins"]:
                         self.addPlot(i)
         except Exception as e:
@@ -259,6 +247,22 @@ class FastAnalyzer(QMainWindow):
         self.settings.setValue("main/windowState", self.saveState())
         self.settings.setValue("main/mode", self.ui.mdiArea.viewMode())
         self.settings.setValue("main/workspacePath", self.workspacePath)
+
+    def addTable(self):
+        if win := [i for i in self.ui.mdiArea.subWindowList() if i.windowTitle() == "Calc"]:
+            self.ui.mdiArea.setActiveSubWindow(win[0])
+        else:
+            subWindow = QMdiSubWindow(self)
+            calc = DataCalc(self.data, parent=self)
+            calc.dataChanged.connect(self.dataChanged)
+            subWindow.setWidget(calc)
+            subWindow.setAttribute(Qt.WA_DeleteOnClose)
+            subWindow.setWindowTitle("Calc")
+            self.ui.mdiArea.addSubWindow(subWindow)
+            subWindow.setWindowIcon(QIcon(":/assets/table.png"))
+            subWindow.show()
+
+
 
 
 if __name__ == "__main__":

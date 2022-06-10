@@ -17,6 +17,7 @@ class Plot(QMainWindow):
         self.ui = Ui_Plot()
         self.ui.setupUi(self)
         self.settingsWindow = PlotSettings(self, params)
+        self.settingsWindow.setKeys(self.data.getDataframe().columns.values.tolist())
         self.ui.settingsDock.setWidget(self.settingsWindow)
 
         self.canvas = FigureCanvas(
@@ -38,6 +39,7 @@ class Plot(QMainWindow):
         self.settingsWindow.plotChanged()
 
     def update(self, params):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
         self.ax.clear()
         params = {i: ("\"{}\"".format(j) if i in [
                       "plotKey", "plotKeyX"] else j) for i, j in params.items()}
@@ -47,6 +49,7 @@ class Plot(QMainWindow):
         self.setLabel(**params)
         self.setTitle(**params)
         self.canvas.draw_idle()
+        QApplication.restoreOverrideCursor()
 
     def plot(self, plotType, plotKey, plotId, customId,
              plotKeyX, lowLevelApi, **kwargs):
@@ -63,7 +66,7 @@ class Plot(QMainWindow):
 
             if plotType in self.settingsWindow.univariateDistPlot:  # Univariate distribution
                 eval(
-                    "sns.{}(data=data.reset_index(drop=True), x={}, y={}, hue={}, ax=self.ax, fill=True, **{})".format(
+                    "sns.{}(data=data, x={}, y={}, hue={}, ax=self.ax, fill=True, **{})".format(
                         plotType,
                         plotKey,
                         plotKeyX,
@@ -71,7 +74,7 @@ class Plot(QMainWindow):
                         lowLevelApi))
             elif plotType in self.settingsWindow.statPlot:  # Descriptive
                 eval(
-                    "sns.{}(data=data.reset_index(drop=True), y={}, x={}, ax=self.ax, **{})".format(
+                    "sns.{}(data=data, y={}, x={}, ax=self.ax, **{})".format(
                         plotType, plotKey, mode, lowLevelApi))
 
             self.ui.statusbar.showMessage(
@@ -91,3 +94,7 @@ class Plot(QMainWindow):
 
     def savePlotState(self):
         return self.settingsWindow.plotChanged()
+
+    def updateData(self):
+        self.settingsWindow.setKeys(self.data.getDataframe().columns.values.tolist())
+        self.settingsWindow.plotChanged()
