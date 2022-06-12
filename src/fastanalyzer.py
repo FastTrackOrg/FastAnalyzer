@@ -27,6 +27,10 @@ class FastAnalyzer(QMainWindow):
         super().__init__()
         self.ui = Ui_FastAnalyzer()
         self.ui.setupUi(self)
+        style = QFile(":/assets/theme.qss")
+        if style.open(QFile.ReadOnly):
+            self.setStyleSheet(style.readAll().data().decode())
+            style.close()
 
         self.settings = QSettings()
         self.restoreGeometry(self.settings.value("main/geometry"))

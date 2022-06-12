@@ -4,5 +4,6 @@
     <file>../assets/Roboto-Regular.ttf</file>
     <file>../assets/plot.png</file>
     <file>../assets/table.png</file>
+    <file>../assets/theme.qss</file>
 </qresource>
 </RCC>

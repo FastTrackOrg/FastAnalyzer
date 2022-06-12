@@ -1,0 +1,96 @@
+QWidget {
+    background: #FFFFFF;
+    alternate-background-color: #DEE4E7;
+    selection-background-color: #37474F;
+    font-family: 'Lato', sans-serif;
+    color: #37474F;
+}
+
+QMenu {
+    background: #37474F;
+    color: #FFFFFF;
+}
+
+QMenu::item:selected {
+    color: #37474F;
+    background: #FFFFFF;
+}
+
+QComboBox::item:selected {
+    background: #37474F;
+    color: #FFFFFF;
+}
+
+QPushButton {
+    background-color: #DEE4E7;
+    selection-background-color: #37474F;
+}
+
+QPushButton::hover {
+    background-color: #37474F;
+    color: #DEE4E7;
+}
+
+QTabBar::tab {
+    background: #37474F;
+    color: #DEE4E7;
+    padding: 10px;
+}
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+    color: #37474F;
+    background: #FFFFFF;
+}
+
+QTabBar::tab:top {
+    border-top: 2px outset #37474F;
+    border-left: 1px inset #37474F;
+    border-right: 1px inset #37474F;
+}
+
+QTabBar::tab:bottom {
+    border-bottom: 2px outset #37474F;
+    border-left: 1px inset #37474F;
+    border-right: 1px inset #37474F;
+}
+
+QTabBar::tab:left {
+    border-left: 2px outset #37474F;
+    border-top: 1px inset #37474F;
+    border-bottom: 1px inset #37474F;
+}
+
+QTabBar::tab:right {
+    border-right: 2px outset #37474F;
+    border-top: 1px inset #37474F;
+    border-bottom: 1px inset #37474F;
+}
+
+QDockWidget {
+    background: #37474F;
+    color: #DEE4E7;
+    padding: 0;
+    margin: 0;
+}
+
+QDockWidget > QWidget {
+    background: #FFFFFF;
+    border: 1px;
+    border-style: solid;
+    border-color: #DEE4E7;
+}
+
+QDockWidget::title {
+    text-align: left;
+    background: #37474F;
+    color: #DEE4E7;
+}
+
+QMenuBar {
+    background: #FFFFFF;
+    color: #37474F;
+}
+
+QTextBrowser {
+    font-family: "Lato"
+}

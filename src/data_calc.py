@@ -15,10 +15,18 @@ class DataCalc(QMainWindow):
         super().__init__(parent)
         self.ui = Ui_DataCalc()
         self.ui.setupUi(self)
+        self.ui.toolBar.addWidget(self.ui.label)
+        self.ui.toolBar.addWidget(self.ui.custom)
 
 
         self.data = data
+        self.operations = []
         self.data.getDataframe().sort_values(by=["id", "imageNumber"], inplace=True)
+
+        if "xHead_meters" in self.data.getDataframe():
+            self.ui.scale.setValue((self.data.getDataframe()["xHead_meters"]/self.data.getDataframe()["xHead"]).values[0])
+        if "time_seconds" in self.data.getDataframe():
+            self.ui.timeScale.setValue((self.data.getDataframe()["time_seconds"]/self.data.getDataframe()["imageNumber"]).values[-1])
 
         for i in ["Head", "Body", "Tail"]:
             velocity = np.array([])
@@ -33,7 +41,9 @@ class DataCalc(QMainWindow):
         self.ui.table.itemChanged.connect(self.updateData)
 
         self.ui.custom.editingFinished.connect(self.addColumn)
-        self.ui.custom.editingFinished.connect(self.loadDataInTable)
+
+        self.ui.scale.valueChanged.connect(self.setScale)
+        self.ui.timeScale.valueChanged.connect(self.setScale)
 
     def loadDataInTable(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -58,11 +68,13 @@ class DataCalc(QMainWindow):
             blocker.reblock()
             try:
                 self.data.getDataframe().eval(i, inplace=True)
+                self.operations.append(i)
                 self.ui.custom.setText(str())
-                self.ui.customDisplay.setText(str())
+                self.ui.statusBar.showMessage(QCoreApplication.translate("data_calc", "{} performed with success".format(i)))
+                self.loadDataInTable()
                 self.dataChanged.emit()
             except Exception as e:
-                self.ui.customDisplay.setText(str(e))
+                self.ui.statusBar.showMessage(str(e))
             blocker.unblock()
             QApplication.restoreOverrideCursor()
 
@@ -71,3 +83,22 @@ class DataCalc(QMainWindow):
             self.data.getDataframe().iat[new.row(), new.column()] = float(new.text())
         except:
             new.setText(str(self.data.getDataframe().iat[new.row(), new.column()]))
+
+    def setScale(self):
+        scale = self.ui.scale.value()
+        timeScale = self.ui.timeScale.value()
+        for i in ["Body", "Tail", "Head"]:
+            self.data.getDataframe()["x{}_meters".format(i)] = self.data.getDataframe()["x{}".format(i)]*scale
+            self.data.getDataframe()["y{}_meters".format(i)] = self.data.getDataframe()["y{}".format(i)] *scale
+            self.data.getDataframe()["velocity{}_meters_by_second".format(i)] = self.data.getDataframe()["velocity{}".format(i)] * (scale/timeScale)
+            self.data.getDataframe()["{}MajorAxisLength_meters".format(i.lower())] = self.data.getDataframe()["{}MajorAxisLength".format(i.lower())]*scale
+            self.data.getDataframe()["{}MinorAxisLength_meters".format(i.lower())] = self.data.getDataframe()["{}MinorAxisLength".format(i.lower())] *scale
+        self.data.getDataframe()["curvature_inverse_meters"] = self.data.getDataframe()["curvature"]/scale
+        self.data.getDataframe()["time_seconds"] = self.data.getDataframe()["imageNumber"]*timeScale
+        self.data.getDataframe()["areaBody_meters_square"] = self.data.getDataframe()["areaBody"]*scale**2
+        self.data.getDataframe()["perimeterBody_meters"] = self.data.getDataframe()["perimeterBody"]*scale
+        for i in self.operations:
+            self.data.getDataframe().eval(i, inplace=True)
+        self.loadDataInTable()
+        self.dataChanged.emit()
+

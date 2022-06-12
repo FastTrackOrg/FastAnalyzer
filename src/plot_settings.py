@@ -121,6 +121,7 @@ class PlotSettings(QWidget):
         self.ui.xLabel.setText(xLabel)
 
     def setKeys(self, keys):
+        keys.sort()
         self.ui.plotKey.clear()
         self.ui.plotKey.addItems(keys + ["None"])
         self.ui.plotKeyX.clear()

@@ -56,13 +56,13 @@ class Plot(QMainWindow):
         try:
             if plotId == "Pool":
                 mode = None
-                data = self.data.getDataframe()
+                data = self.data.getDataframe().dropna()
             elif plotId == "All":
                 mode = "\"id\""
-                data = self.data.getDataframe()
+                data = self.data.getDataframe().dropna()
             else:
                 mode = "\"id\""
-                data = self.data.getObjects(eval("[{}]".format(customId)))
+                data = self.data.getObjects(eval("[{}]".format(customId))).dropna()
 
             if plotType in self.settingsWindow.univariateDistPlot:  # Univariate distribution
                 eval(
