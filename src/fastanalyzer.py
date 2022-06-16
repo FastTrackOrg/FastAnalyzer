@@ -111,7 +111,7 @@ class FastAnalyzer(QMainWindow):
         self.addPlotAction.triggered.connect(self.addPlot)
         self.ui.toolBar.addAction(self.addPlotAction)
         self.addTableAction = QAction(QIcon(":/assets/table.png"),
-                                     QCoreApplication.translate(
+                                      QCoreApplication.translate(
             "main", "Show Table"), self)
         self.addTableAction.triggered.connect(self.addTable)
         self.ui.toolBar.addAction(self.addTableAction)
@@ -181,7 +181,11 @@ class FastAnalyzer(QMainWindow):
                 wins.append(var)
 
         with open(path, 'wb') as file:
-            workspace = {"name": path, "filename": self.fileName, "wins": wins, "data": self.data}
+            workspace = {
+                "name": path,
+                "filename": self.fileName,
+                "wins": wins,
+                "data": self.data}
             self.workspacePath = workspace["name"]
             pickle.dump(workspace, file)
 
@@ -191,8 +195,12 @@ class FastAnalyzer(QMainWindow):
                 with open(path, 'rb') as file:
                     workspace = pickle.load(file)
                     self.fileName = workspace["filename"]
-                    self.data = workspace["data"]
                     self.workspacePath = workspace["name"]
+                    self.data = workspace["data"]
+                    if self.data is None:
+                        raise Exception(
+                            QCoreApplication.translate(
+                                "main", "empty data"))
                     self.ui.statusbar.showMessage(
                         QCoreApplication.translate(
                             "main", "{} loaded with success".format(
@@ -203,7 +211,7 @@ class FastAnalyzer(QMainWindow):
                         self.addPlot(i)
         except Exception as e:
             self.ui.statusbar.showMessage(QCoreApplication.translate(
-                "main", "Last workspace can't be recovered {}".format(e)))
+                "main", "Last workspace can't be recovered: {}".format(e)))
             self.resetUi()
 
     def saveWorkspace(self):
@@ -253,7 +261,8 @@ class FastAnalyzer(QMainWindow):
         self.settings.setValue("main/workspacePath", self.workspacePath)
 
     def addTable(self):
-        if win := [i for i in self.ui.mdiArea.subWindowList() if i.windowTitle() == "Calc"]:
+        if win := [i for i in self.ui.mdiArea.subWindowList()
+                   if i.windowTitle() == "Calc"]:
             self.ui.mdiArea.setActiveSubWindow(win[0])
         else:
             subWindow = QMdiSubWindow(self)
@@ -265,8 +274,6 @@ class FastAnalyzer(QMainWindow):
             self.ui.mdiArea.addSubWindow(subWindow)
             subWindow.setWindowIcon(QIcon(":/assets/table.png"))
             subWindow.show()
-
-
 
 
 if __name__ == "__main__":
