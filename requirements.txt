@@ -16,9 +16,12 @@ pyparsing==3.0.9
 PySide2==5.15.2.1
 python-dateutil==2.8.2
 pytz==2022.1
+QDarkStyle==3.1
+QtPy==2.1.0
 scipy==1.8.1
 seaborn==0.11.2
 shiboken2==5.15.2.1
 six==1.16.0
+statannotations==0.4.4
 toml==0.10.2
 xlrd==2.0.1

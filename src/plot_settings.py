@@ -40,6 +40,9 @@ class PlotSettings(QWidget):
         self.univariateDistPlot = ["histplot", "kdeplot"]
         self.statPlot = ["boxplot", "violinplot", "swarmplot", "boxenplot"]
 
+        self.ui.pTest.currentIndexChanged.connect(self.plotChanged)
+        self.ui.pPairs.editingFinished.connect(self.plotChanged)
+
         # Workaround to force redraw to setup automatically all the labels
         originalIndex = self.ui.plotType.currentIndex()
         self.ui.plotType.setCurrentIndex(0)
@@ -60,6 +63,8 @@ class PlotSettings(QWidget):
         self.ui.plotId.setCurrentText(params["plotId"])
         self.ui.customId.setText(params["customId"])
         self.ui.lowLevelApi.setText(params["lowLevelApi"])
+        self.ui.pTest.setCurrentText(params["pTest"])
+        self.ui.pPairs.setText(params["pPairs"])
 
     def plotChanged(self):
         self.autoLabel()
@@ -74,6 +79,8 @@ class PlotSettings(QWidget):
         params["plotKeyX"] = self.ui.plotKeyX.currentText()
         params["plotId"] = self.ui.plotId.currentText()
         params["customId"] = self.ui.customId.text()
+        params["pTest"] = self.ui.pTest.currentText()
+        params["pPairs"] = self.ui.pPairs.text()
         if not self.ui.lowLevelApi.text():
             self.ui.lowLevelApi.setText("{}")
         params["lowLevelApi"] = self.ui.lowLevelApi.text()
@@ -92,12 +99,17 @@ class PlotSettings(QWidget):
             self.ui.x.setText("X")
             self.ui.y.setText("Y")
             self.ui.hue.setText("Cat")
+            self.ui.pTest.setEnabled(False)
+            self.ui.pPairs.setEnabled(False)
         elif plotType in self.statPlot:
             self.ui.plotKeyX.setEnabled(False)
             self.ui.x.setText("Y")
             self.ui.hue.setText("X")
+            self.ui.pTest.setEnabled(True)
+            self.ui.pPairs.setEnabled(True)
 
     def autoLabel(self):
+        self.ui.pDetail.clear()
         if self.ui.plotType.currentText() in self.univariateDistPlot:
             xLabel = self.ui.plotKey.currentText()
             yLabel = self.ui.plotKeyX.currentText()
