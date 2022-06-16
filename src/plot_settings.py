@@ -9,11 +9,13 @@ class PlotSettings(QWidget):
 
     redraw = Signal(dict)
 
-    def __init__(self, parent=None, params=None):
+    def __init__(self, parent=None, keys=None, params=None):
         super().__init__(parent)
         self.ui = Ui_PlotSettings()
         self.ui.setupUi(self)
 
+        if keys:
+            self.setKeys(keys)
         if params:
             self.setValues(params)
 

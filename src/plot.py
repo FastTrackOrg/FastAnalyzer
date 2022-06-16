@@ -17,9 +17,7 @@ class Plot(QMainWindow):
         self.data = data
         self.ui = Ui_Plot()
         self.ui.setupUi(self)
-        self.settingsWindow = PlotSettings(self, params)
-        self.settingsWindow.setKeys(
-            self.data.getDataframe().columns.values.tolist())
+        self.settingsWindow = PlotSettings(self, params=params, keys=self.data.getDataframe().columns.values.tolist())
         self.ui.settingsDock.setWidget(self.settingsWindow)
 
         self.canvas = FigureCanvas(
