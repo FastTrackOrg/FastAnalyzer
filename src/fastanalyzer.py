@@ -27,12 +27,18 @@ class FastAnalyzer(QMainWindow):
         super().__init__()
         self.ui = Ui_FastAnalyzer()
         self.ui.setupUi(self)
+        self.setWindowTitle("FastAnalyzer DEMO ALPHA")
         style = QFile(":/assets/theme.qss")
         if style.open(QFile.ReadOnly):
             self.setStyleSheet(style.readAll().data().decode())
             style.close()
 
         self.settings = QSettings()
+        self.license = int(self.settings.value("main/license", "0o0"), 8)
+        timer = QTimer(self)
+        timer.timeout.connect(self.checkLicense)
+        timer.setInterval(1000*60)
+        timer.start()
         self.restoreGeometry(self.settings.value("main/geometry"))
         self.restoreState(self.settings.value("main/windowState"))
 
@@ -255,6 +261,7 @@ class FastAnalyzer(QMainWindow):
         event.accept()
 
     def saveSettings(self):
+        self.settings.setValue("main/license", oct(self.license))
         self.settings.setValue("main/geometry", self.saveGeometry())
         self.settings.setValue("main/windowState", self.saveState())
         self.settings.setValue("main/mode", self.ui.mdiArea.viewMode())
@@ -274,6 +281,13 @@ class FastAnalyzer(QMainWindow):
             self.ui.mdiArea.addSubWindow(subWindow)
             subWindow.setWindowIcon(QIcon(":/assets/table.png"))
             subWindow.show()
+
+    def checkLicense(self):
+        self.license += 1
+        self.ui.statusbar.showMessage("{} minutes remaining in demo".format(30-self.license))
+        if self.license > 30:
+            QMessageBox.critical(self, "License expired", "The demo version of FastAnalyzer is expired, check https://www.fasttrack.sh/blog for more information.")
+            self.close()
 
 
 if __name__ == "__main__":
