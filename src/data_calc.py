@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QApplication, QMainWindow, QAction, QActionGroup, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem, QWidget
-from PySide2.QtCore import Signal, QFile, QStandardPaths, Qt, QTimer, QSignalBlocker
+from PySide2.QtCore import Signal, QFile, QCoreApplication, QStandardPaths, Qt, QTimer, QSignalBlocker
 from PySide2.QtGui import QColor, QIcon, QPen, QPainter, QPalette, QPixmap, QFont, QFontDatabase
 import PySide2.QtXml
 from ui_data_calc import Ui_DataCalc
@@ -75,12 +75,12 @@ class DataCalc(QMainWindow):
                 self.data.getDataframe().eval(i, inplace=True)
                 self.operations.append(i)
                 self.ui.custom.setText(str())
-                self.ui.statusBar.showMessage(QCoreApplication.translate(
+                self.ui.statusbar.showMessage(QCoreApplication.translate(
                     "data_calc", "{} performed with success".format(i)))
                 self.loadDataInTable()
                 self.dataChanged.emit()
             except Exception as e:
-                self.ui.statusBar.showMessage(str(e))
+                self.ui.statusbar.showMessage(str(e))
             blocker.unblock()
             QApplication.restoreOverrideCursor()
 

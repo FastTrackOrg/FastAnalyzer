@@ -134,7 +134,10 @@ class PlotSettings(QWidget):
 
     def setKeys(self, keys):
         keys.sort()
+        prev = (self.ui.plotKey.currentText(), self.ui.plotKeyX.currentText())
         self.ui.plotKey.clear()
         self.ui.plotKey.addItems(keys + ["None"])
         self.ui.plotKeyX.clear()
         self.ui.plotKeyX.addItems(["None"] + keys)
+        self.ui.plotKey.setCurrentText(prev[0])
+        self.ui.plotKeyX.setCurrentText(prev[1])
