@@ -76,7 +76,7 @@ class FastAnalyzer(QMainWindow):
         winView.toggled.connect(tileView.setEnabled)
         self.ui.menuView.addAction(tileView)
 
-        if self.settings.value("main/mode", "0") == "0":
+        if int(self.settings.value("main/mode", 0)) == 0:
             winView.setChecked(True)
         else:
             tileView.setEnabled(False)
