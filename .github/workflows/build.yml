@@ -22,12 +22,12 @@ jobs:
     - name: Build package
       run: |
         ./build.sh
-        python -m PyInstaller src/fastanalyzer.py --onefile --noconsole --name="FastAnalyzer" #--icon=assets/images/icon.ico
+        python -m PyInstaller src/fastanalyzer.py --noconsole --name="FastAnalyzer" #--icon=assets/images/icon.ico
     - name: Linux artefact
       uses: actions/upload-artifact@v3
       with:
         name: FastAnalyzer_linux
-        path: ./dist/FastAnalyzer
+        path: ./dist/FastAnalyzer/
 
   build_macos:
     runs-on: macos-latest
@@ -45,13 +45,13 @@ jobs:
     - name: Build package
       run: |
         ./build.sh
-        python -m PyInstaller src/fastanalyzer.py --onefile --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
+        python -m PyInstaller src/fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
     - name: Mac artefact
       uses: actions/upload-artifact@v3
       with:
         name: FastAnalyzer_macos
-        path: ./dist/FastAnalyzer.app
-        
+        path: ./dist/FastAnalyzer/
+
   build_windows:
     runs-on: windows-latest
     steps:
@@ -69,9 +69,9 @@ jobs:
       shell: bash
       run: |
         ./build.sh
-        python -m PyInstaller src/fastanalyzer.py --onefile --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico 
+        python -m PyInstaller src/fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
     - name: Windows artefact
       uses: actions/upload-artifact@v3
       with:
         name: FastAnalyzer_windows
-        path: ./dist/FastAnalyzer.exe
+        path: ./dist/FastAnalyzer/
