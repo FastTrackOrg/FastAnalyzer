@@ -22,7 +22,7 @@ jobs:
     - name: Build package
       run: |
         ./build.sh
-        python -m PyInstaller src/fastanalyzer.py --noconsole --name="FastAnalyzer" #--icon=assets/images/icon.ico
+        python -m PyInstaller fastanalyzer/fastanalyzer.py --noconsole --name="FastAnalyzer" #--icon=assets/images/icon.ico
     - name: Linux artefact
       uses: actions/upload-artifact@v3
       with:
@@ -45,7 +45,7 @@ jobs:
     - name: Build package
       run: |
         ./build.sh
-        python -m PyInstaller src/fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
+        python -m PyInstaller fastanalyzer/fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
     - name: Mac artefact
       uses: actions/upload-artifact@v3
       with:
@@ -69,7 +69,7 @@ jobs:
       shell: bash
       run: |
         ./build.sh
-        python -m PyInstaller src/fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
+        python -m PyInstaller fastanalyzer/fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
     - name: Windows artefact
       uses: actions/upload-artifact@v3
       with:

@@ -1,2 +1,2 @@
 ./build.sh
-python src/fastanalyzer.py
+python fastanalyzer/fastanalyzer.py

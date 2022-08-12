@@ -1,5 +1,8 @@
-import rc_ressources
+#!/usr/bin/env python
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import rc_ressources
 import sys
 import pickle
 
@@ -290,7 +293,7 @@ class FastAnalyzer(QMainWindow):
             self.close()
 
 
-if __name__ == "__main__":
+def main():
     app = QApplication([])
     QFontDatabase.addApplicationFont(":/assets/RobotoCondensed-Regular.ttf")
     QFontDatabase.addApplicationFont(":/assets/Roboto-Regular.ttf")
@@ -302,3 +305,6 @@ if __name__ == "__main__":
     widget = FastAnalyzer()
     widget.show()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
