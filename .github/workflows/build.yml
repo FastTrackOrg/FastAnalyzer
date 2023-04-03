@@ -3,6 +3,7 @@ name: pyinstaller
 on:
   push:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
 
@@ -22,12 +23,13 @@ jobs:
     - name: Build package
       run: |
         ./build.sh
-        python -m PyInstaller fastanalyzer/fastanalyzer.py --noconsole --name="FastAnalyzer" #--icon=assets/images/icon.ico
+        cd fastanalyzer # Build not working in outer dir ?!
+        python -m PyInstaller fastanalyzer.py --noconsole --name="FastAnalyzer" #--icon=assets/images/icon.ico
     - name: Linux artefact
       uses: actions/upload-artifact@v3
       with:
         name: FastAnalyzer_linux
-        path: ./dist/FastAnalyzer/
+        path: ./fastanalyzer/dist/FastAnalyzer/
 
   build_macos:
     runs-on: macos-latest
@@ -45,12 +47,14 @@ jobs:
     - name: Build package
       run: |
         ./build.sh
-        python -m PyInstaller fastanalyzer/fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
+        cd fastanalyzer # Build not working in outer dir ?!
+        python -m PyInstaller fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole --onedir --windowed #--icon=assets/images/icon.ico
+        hdiutil create -volname FastAnalyzer -srcfolder dist/FastAnalyzer.app -ov -format UDZO dist/FastAnalyzer.dmg
     - name: Mac artefact
       uses: actions/upload-artifact@v3
       with:
         name: FastAnalyzer_macos
-        path: ./dist/FastAnalyzer/
+        path: ./fastanalyzer/dist/FastAnalyzer.dmg
 
   build_windows:
     runs-on: windows-latest
@@ -69,9 +73,10 @@ jobs:
       shell: bash
       run: |
         ./build.sh
-        python -m PyInstaller fastanalyzer/fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
+        cd fastanalyzer # Build not working in outer dir ?!
+        python -m PyInstaller fastanalyzer.py --noconsole --name="FastAnalyzer" --noconsole #--icon=assets/images/icon.ico
     - name: Windows artefact
       uses: actions/upload-artifact@v3
       with:
         name: FastAnalyzer_windows
-        path: ./dist/FastAnalyzer/
+        path: ./fastanalyzer/dist/FastAnalyzer/
