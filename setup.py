@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="fastanalyzer",
-    version="0.0.2",
+    version="0.1.2",
     author="Benjamin Gallois",
     author_email="benjamin.gallois@fasttrack.sh",
     description="Companion application to analyze data extracted with FastTrack software.",
@@ -10,7 +10,7 @@ setup(
     packages=['fastanalyzer'],
     install_requires=[
         'fastanalysis',
-        'PySide2',
+        'PySide6',
         'matplotlib',
         'seaborn',
         'statannotations',],

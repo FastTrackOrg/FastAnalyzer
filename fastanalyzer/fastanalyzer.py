@@ -304,7 +304,7 @@ def main():
     QFontDatabase.addApplicationFont(":/assets/Roboto-Regular.ttf")
     app.setFont(QFont("Roboto"))
     app.setApplicationName("FastAnalyzer")
-    app.setApplicationVersion("0.0.0")
+    app.setApplicationVersion("0.1.2")
     app.setOrganizationName("FastTrackOrg")
     app.setOrganizationDomain("fasttrack.sh")
     widget = FastAnalyzer()
