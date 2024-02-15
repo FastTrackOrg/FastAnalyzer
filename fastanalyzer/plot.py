@@ -1,6 +1,6 @@
-from PySide2.QtWidgets import QApplication, QMainWindow, QAction, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow
-from PySide2.QtCore import Signal, QFile, QCoreApplication, QStandardPaths, Qt, QTimer
-from PySide2.QtGui import QColor, QIcon, QPen, QPainter, QPalette, QPixmap, QFont, QFontDatabase
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow
+from PySide6.QtCore import Signal, QFile, QCoreApplication, QStandardPaths, Qt, QTimer
+from PySide6.QtGui import QColor, QIcon, QPen, QPainter, QAction, QPalette, QPixmap, QFont, QFontDatabase
 from ui_plot import Ui_Plot
 
 from plot_settings import PlotSettings
@@ -17,7 +17,8 @@ class Plot(QMainWindow):
         self.data = data
         self.ui = Ui_Plot()
         self.ui.setupUi(self)
-        self.settingsWindow = PlotSettings(self, params=params, keys=self.data.getDataframe().columns.values.tolist())
+        self.settingsWindow = PlotSettings(
+            self, params=params, keys=self.data.getDataframe().columns.values.tolist())
         self.ui.settingsDock.setWidget(self.settingsWindow)
 
         self.canvas = FigureCanvas(

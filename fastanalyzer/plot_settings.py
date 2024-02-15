@@ -1,7 +1,7 @@
-from PySide2.QtWidgets import QWidget, QApplication, QMainWindow, QAction, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow
-from PySide2.QtCore import Signal, QFile, QStandardPaths, Qt, QTimer
-from PySide2.QtGui import QColor, QIcon, QPen, QPainter, QPalette, QPixmap, QFont, QFontDatabase
-import PySide2.QtXml
+from PySide6.QtWidgets import QWidget, QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow
+from PySide6.QtCore import Signal, QFile, QStandardPaths, Qt, QTimer
+from PySide6.QtGui import QColor, QIcon, QPen, QPainter, QPalette, QAction, QPixmap, QFont, QFontDatabase
+import PySide6.QtXml
 from ui_plot_settings import Ui_PlotSettings
 
 

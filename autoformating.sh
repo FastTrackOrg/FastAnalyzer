@@ -1,1 +1,1 @@
-autopep8 --in-place --aggressive src/*.py
+autopep8 --in-place --aggressive fastanalyzer/*.py

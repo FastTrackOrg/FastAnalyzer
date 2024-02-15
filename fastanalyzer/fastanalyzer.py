@@ -2,22 +2,21 @@
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import rc_ressources
-import sys
-import pickle
 
-from plot import Plot
-from data_calc import DataCalc
-import fastanalysis as fa
-
-from PySide2.QtWidgets import QApplication, QMainWindow, QAction, QActionGroup, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem
-from PySide2.QtCore import Signal, Slot, QFile, QStandardPaths, Qt, QTimer, QCoreApplication, QSettings
-from PySide2.QtGui import QColor, QIcon, QPen, QPainter, QPalette, QPixmap, QFont, QFontDatabase
-import PySide2.QtXml
+##
 from ui_fastanalyzer import Ui_FastAnalyzer
+import PySide6.QtXml
+from PySide6.QtGui import QColor, QIcon, QPen, QPainter, QAction, QActionGroup, QPalette, QPixmap, QFont, QFontDatabase
+from PySide6.QtCore import Signal, Slot, QFile, QStandardPaths, Qt, QTimer, QCoreApplication, QSettings
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem
+import fastanalysis as fa
+from data_calc import DataCalc
+from plot import Plot
+import pickle
+import rc_ressources
 
 
-dirname = os.path.dirname(PySide2.__file__)
+dirname = os.path.dirname(PySide6.__file__)
 plugin_path = os.path.join(dirname, 'plugins', 'platforms')
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 
@@ -40,7 +39,7 @@ class FastAnalyzer(QMainWindow):
         self.license = int(self.settings.value("main/license", "0o0"), 8)
         timer = QTimer(self)
         timer.timeout.connect(self.checkLicense)
-        timer.setInterval(1000*60)
+        timer.setInterval(1000 * 60)
         timer.start()
         self.restoreGeometry(self.settings.value("main/geometry"))
         self.restoreState(self.settings.value("main/windowState"))
@@ -79,7 +78,8 @@ class FastAnalyzer(QMainWindow):
         winView.toggled.connect(tileView.setEnabled)
         self.ui.menuView.addAction(tileView)
 
-        if int(self.settings.value("main/mode", 0)) == 0:
+        if self.settings.value(
+                "main/mode", QMdiArea.TabbedView) == QMdiArea.SubWindowView:
             winView.setChecked(True)
         else:
             tileView.setEnabled(False)
@@ -287,9 +287,14 @@ class FastAnalyzer(QMainWindow):
 
     def checkLicense(self):
         self.license += 1
-        self.ui.statusbar.showMessage("{} minutes remaining in demo".format(30-self.license))
+        self.ui.statusbar.showMessage(
+            "{} minutes remaining in demo".format(
+                30 - self.license))
         if self.license > 30:
-            QMessageBox.critical(self, "License expired", "The demo version of FastAnalyzer is expired, check https://www.fasttrack.sh/blog for more information.")
+            QMessageBox.critical(
+                self,
+                "License expired",
+                "The demo version of FastAnalyzer is expired, check https://www.fasttrack.sh/blog for more information.")
             self.close()
 
 
@@ -305,6 +310,7 @@ def main():
     widget = FastAnalyzer()
     widget.show()
     sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     main()

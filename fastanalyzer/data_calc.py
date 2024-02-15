@@ -1,7 +1,7 @@
-from PySide2.QtWidgets import QApplication, QMainWindow, QAction, QActionGroup, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem, QWidget
-from PySide2.QtCore import Signal, QFile, QCoreApplication, QStandardPaths, Qt, QTimer, QSignalBlocker
-from PySide2.QtGui import QColor, QIcon, QPen, QPainter, QPalette, QPixmap, QFont, QFontDatabase
-import PySide2.QtXml
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem, QWidget
+from PySide6.QtCore import Signal, QFile, QCoreApplication, QStandardPaths, Qt, QTimer, QSignalBlocker
+from PySide6.QtGui import QColor, QIcon, QPen, QPainter, QAction, QActionGroup, QPalette, QPixmap, QFont, QFontDatabase
+import PySide6.QtXml
 from ui_data_calc import Ui_DataCalc
 import numpy as np
 
